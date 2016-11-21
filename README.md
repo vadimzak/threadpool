@@ -1,0 +1,1 @@
+## threadpool.js is an abstraction of a thread-pool lib for Javascript.
