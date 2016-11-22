@@ -1,6 +1,6 @@
 {
   "name": "threadpool",
-  "version": "0.9.3",
+  "version": "0.9.4",
   "description": "A thread-pool abstraction for ES6 async operations",
   "keywords": ["threadpool", "async", "await", "parallel", "es6"],
   "main": "build/ThreadPool.js",
@@ -11,7 +11,7 @@
     "runtest": "node_modules/.bin/mocha --require source-map-support/register --recursive \"build/**/*.test.js\"",
     "test": "npm run build && npm run runtest",
     "prep": "npm run flow && npm run lint && npm run test",
-    "publish": "npm run prep && npm publish"
+    "npmpublish": "npm run prep && npm publish"
   },
   "author": "Vadim Zak <vadimzak@gmail.com>",
   "license": "MIT",
@@ -41,5 +41,5 @@
     "type": "git",
     "url": "https://github.com/vadimzak/threadpool"
   },
-  "engines": { "node" : ">=4.0.0" }
+  "engines": { "node" : ">=5.0.0" }
 }
