@@ -1,21 +1,21 @@
 {
-    "plugins": [
-        "transform-class-properties",
-        "transform-export-extensions",
+  "plugins": [
+    "transform-class-properties",
+    "transform-export-extensions",
 
-        "transform-object-rest-spread",
+    "transform-object-rest-spread",
 
-        "syntax-trailing-function-commas",
-        "transform-async-to-generator",
-        "transform-exponentiation-operator",
+    "syntax-trailing-function-commas",
+    "transform-async-to-generator",
+    "transform-exponentiation-operator",
 
-        "transform-es2015-modules-commonjs",
-        "transform-flow-strip-types",
+    "transform-es2015-modules-commonjs",
+    "transform-flow-strip-types",
 
-        "transform-async-generator-functions"
-    ],
-    "presets": [
-        "es2017"
-    ],
-    "sourceMaps": "true"
+    "transform-async-generator-functions"
+  ],
+  "presets": [
+    "es2017"
+  ],
+  "sourceMaps": "true"
 }

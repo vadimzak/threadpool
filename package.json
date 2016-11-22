@@ -1,7 +1,8 @@
 {
   "name": "threadpool",
-  "version": "0.9.1",
-  "description": "threadpool.js is an abstraction of a thread-pool lib for Javascript.",
+  "version": "0.9.3",
+  "description": "A thread-pool abstraction for ES6 async operations",
+  "keywords": ["threadpool", "async", "await", "parallel", "es6"],
   "main": "build/ThreadPool.js",
   "scripts": {
     "build": "node_modules/.bin/babel src -d build --source-maps",
@@ -9,7 +10,8 @@
     "flow": "node_modules/.bin/flow ./src",
     "runtest": "node_modules/.bin/mocha --require source-map-support/register --recursive \"build/**/*.test.js\"",
     "test": "npm run build && npm run runtest",
-    "prep": "npm run flow && npm run lint && npm run test"
+    "prep": "npm run flow && npm run lint && npm run test",
+    "publish": "npm run prep && npm publish"
   },
   "author": "Vadim Zak <vadimzak@gmail.com>",
   "license": "MIT",
@@ -34,5 +36,10 @@
   },
   "dependencies": {
     "source-map-support": "^0.4.6"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vadimzak/threadpool"
+  },
+  "engines": { "node" : ">=4.0.0" }
 }

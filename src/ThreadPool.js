@@ -18,6 +18,13 @@ class TaskDesc {
   }
 }
 
+/**
+ * A thread-pool abstraction for ES6 async operations",
+ * 
+ * @export
+ * @class ThreadPool
+ * @extends {EventEmitter}
+ */
 export default class ThreadPool extends EventEmitter {
   startTimeMs: number
   endTimeMs: number

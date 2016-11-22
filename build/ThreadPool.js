@@ -27,6 +27,13 @@ class TaskDesc {
   }
 }
 
+/**
+ * A thread-pool abstraction for ES6 async operations",
+ * 
+ * @export
+ * @class ThreadPool
+ * @extends {EventEmitter}
+ */
 class ThreadPool extends _events2.default {
 
   constructor(maxThreadsCount = _os2.default.cpus().length, errorHandler, sleepTimeMs = DEFAULT_SLEEP_TIME_MS, maxQueueSize = Infinity) {
