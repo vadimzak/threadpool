@@ -16,7 +16,7 @@
   },
   "rules": {
     "strict": 1,
-    "indent": ["error", 2],
+    "indent": 2,
     "semi": 0,
     "no-unused-vars": 1,
     "comma-dangle": 0,

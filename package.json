@@ -1,6 +1,6 @@
 {
   "name": "threadpool",
-  "version": "0.9.5",
+  "version": "0.9.6",
   "description": "A thread-pool abstraction for ES6 async operations",
   "keywords": [
     "threadpool",
@@ -18,7 +18,7 @@
     "test": "npm run build && npm run runtest",
     "prep": "npm run flow && npm run lint && npm run test",
     "npmpublish": "npm run prep && npm publish",
-    "git-ammend": "git add . && git commit --amend --no-edit && git push -f"
+    "git-amend": "git add . && git commit --amend --no-edit && git push -f"
   },
   "author": "Vadim Zak <vadimzak@gmail.com>",
   "license": "MIT",

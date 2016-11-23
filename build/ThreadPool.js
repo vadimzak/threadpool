@@ -4,6 +4,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 require('babel-polyfill');
@@ -11,10 +13,6 @@ require('babel-polyfill');
 var _events = require('events');
 
 var _events2 = _interopRequireDefault(_events);
-
-var _os = require('os');
-
-var _os2 = _interopRequireDefault(_os);
 
 var _asyncUtils = require('./asyncUtils');
 
@@ -45,17 +43,41 @@ var TaskDesc = function TaskDesc() {
  * @class ThreadPool
  * @extends {EventEmitter}
  */
-
-
 var ThreadPool = function (_EventEmitter) {
   _inherits(ThreadPool, _EventEmitter);
 
-  function ThreadPool() {
-    var maxThreadsCount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _os2.default.cpus().length;
-    var errorHandler = arguments[1];
-    var sleepTimeMs = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_SLEEP_TIME_MS;
-    var maxQueueSize = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : Infinity;
+  _createClass(ThreadPool, null, [{
+    key: 'run',
+    value: function () {
+      var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee(maxThreadsCount, freeParam1, freeParam2) {
+        return regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                return _context.abrupt('return', new ThreadPool(maxThreadsCount, freeParam1, freeParam2).runAllQueued());
 
+              case 1:
+              case 'end':
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+
+      function run(_x, _x2, _x3) {
+        return _ref.apply(this, arguments);
+      }
+
+      return run;
+    }()
+
+    /**
+     * Creates an instance of ThreadPool
+     */
+
+  }]);
+
+  function ThreadPool(maxThreadsCount, freeParam1, freeParam2) {
     _classCallCheck(this, ThreadPool);
 
     var _this = _possibleConstructorReturn(this, (ThreadPool.__proto__ || Object.getPrototypeOf(ThreadPool)).call(this));
@@ -69,28 +91,78 @@ var ThreadPool = function (_EventEmitter) {
     _this._taskData = new Map();
 
 
+    _this.maxThreadsCount = maxThreadsCount;
+
+    // set defualts
+    _this.errorHandler = function (err) {
+      return console.error(err);
+    }; // eslint-disable-line no-console
+    _this.sleepTimeMs = DEFAULT_SLEEP_TIME_MS;
+    _this.maxQueueSize = Infinity;
+
+    if (Array.isArray(freeParam1)) {
+      _this.preQueuedTasks = freeParam1;
+    } else if ((typeof freeParam1 === 'undefined' ? 'undefined' : _typeof(freeParam1)) === 'object') {
+      if (freeParam1.errorHandler != undefined) _this.errorHandler = freeParam1.errorHandler;
+      if (freeParam1.sleepTimeMs != undefined) _this.sleepTimeMs = freeParam1.sleepTimeMs;
+      if (freeParam1.maxQueueSize != undefined) _this.maxQueueSize = freeParam1.maxQueueSize;
+    }
+
+    if (Array.isArray(freeParam2)) {
+      if (_this.preQueuedTasks) throw new Error('Tasks were set twice');
+      _this.preQueuedTasks = freeParam2;
+    }
+
     if (maxThreadsCount <= 0) {
       throw new Error('ThreadPool maxThreadsCount must be greater than 0');
     }
-    _this.maxThreadsCount = maxThreadsCount;
-    _this.errorHandler = errorHandler || function (err) {
-      return console.error(err);
-    }; // eslint-disable-line no-console
-    _this.sleepTimeMs = sleepTimeMs;
-    _this.maxQueueSize = maxQueueSize;
+
+    if (_this.preQueuedTasks) {
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = _this.preQueuedTasks[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var preQueuedTask = _step.value;
+
+          _this._internalQueue(preQueuedTask);
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+    }
     return _this;
   }
+
+  /**
+   * Queues a task (function / async function / Promise)
+   * 
+   * @param  {Function|Promise<*>} func
+   */
+
 
   _createClass(ThreadPool, [{
     key: 'queue',
     value: function () {
-      var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee(func) {
-        return regeneratorRuntime.wrap(function _callee$(_context) {
+      var _ref2 = _asyncToGenerator(regeneratorRuntime.mark(function _callee2(func) {
+        return regeneratorRuntime.wrap(function _callee2$(_context2) {
           while (1) {
-            switch (_context.prev = _context.next) {
+            switch (_context2.prev = _context2.next) {
               case 0:
                 if (!this.closed) {
-                  _context.next = 2;
+                  _context2.next = 2;
                   break;
                 }
 
@@ -98,119 +170,87 @@ var ThreadPool = function (_EventEmitter) {
 
               case 2:
                 if (!(this.maxQueueSize !== Infinity)) {
-                  _context.next = 8;
+                  _context2.next = 8;
                   break;
                 }
 
               case 3:
                 if (!(this.queuedTasks.length >= this.maxQueueSize)) {
-                  _context.next = 8;
+                  _context2.next = 8;
                   break;
                 }
 
-                _context.next = 6;
+                _context2.next = 6;
                 return (0, _asyncUtils.sleep)(this.sleepTimeMs);
 
               case 6:
-                _context.next = 3;
+                _context2.next = 3;
                 break;
 
               case 8:
 
-                this.queuedTasks.push({ func: func, index: this.queuedCount });
-                this._taskData.set(this.queuedCount, new TaskDesc());
-                this.queuedCount++;
-
-              case 11:
-              case 'end':
-                return _context.stop();
-            }
-          }
-        }, _callee, this);
-      }));
-
-      function queue(_x4) {
-        return _ref.apply(this, arguments);
-      }
-
-      return queue;
-    }()
-  }, {
-    key: '_popAndRunNextTask',
-    value: function () {
-      var _ref2 = _asyncToGenerator(regeneratorRuntime.mark(function _callee2() {
-        var taskToRun, taskData;
-        return regeneratorRuntime.wrap(function _callee2$(_context2) {
-          while (1) {
-            switch (_context2.prev = _context2.next) {
-              case 0:
-                taskToRun = this.queuedTasks.shift();
-                taskData = this._taskData.get(taskToRun.index);
-
-                if (taskData) {
-                  _context2.next = 4;
-                  break;
-                }
-
-                throw new Error('unexpected');
-
-              case 4:
-                _context2.prev = 4;
-
-                this.startedCount++;
-                taskData.startTime = Date.now();
-                _context2.next = 9;
-                return taskToRun.func();
+                this._internalQueue(func);
 
               case 9:
-                _context2.next = 14;
-                break;
-
-              case 11:
-                _context2.prev = 11;
-                _context2.t0 = _context2['catch'](4);
-
-                try {
-                  taskData.err = _context2.t0;
-                  this.errorHandler(_context2.t0);
-                } catch (err2) {
-                  this.uncaughtErrors.push(err2);
-                }
-
-              case 14:
-                this.endedCount++;
-                taskData.endTime = Date.now();
-
-                // fire 'progress' event
-                this.emit('progress', { endedCount: this.endedCount });
-
-              case 17:
               case 'end':
                 return _context2.stop();
             }
           }
-        }, _callee2, this, [[4, 11]]);
+        }, _callee2, this);
       }));
 
-      function _popAndRunNextTask() {
+      function queue(_x4) {
         return _ref2.apply(this, arguments);
       }
 
-      return _popAndRunNextTask;
+      return queue;
     }()
+
+    /**
+     * Starts executing all queued tasks
+     * 
+     * This function can be awaited - it will return after the ThreadPool has been closed and all it's tasks completed, or after a task threw an error.
+     */
+
   }, {
-    key: 'runAllQueued',
+    key: 'run',
     value: function () {
       var _ref3 = _asyncToGenerator(regeneratorRuntime.mark(function _callee3() {
         return regeneratorRuntime.wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
-                this.close();
-                _context3.next = 3;
-                return this.run();
+                _context3.next = 2;
+                return (0, _asyncUtils.sleep)(0);
+
+              case 2:
+
+                this.startTimeMs = Date.now();
 
               case 3:
+                if (!this._thereIsSomethingToWaitFor) {
+                  _context3.next = 9;
+                  break;
+                }
+
+                // start new queued tasks
+                while (this._thereAreQueuedTasksThatCanRun && this._thereIsSpaceForNewTasks) {
+                  this._popAndRunNextTask();
+                }
+
+                _context3.next = 7;
+                return (0, _asyncUtils.sleep)(this.sleepTimeMs);
+
+              case 7:
+                _context3.next = 3;
+                break;
+
+              case 9:
+                this.endTimeMs = Date.now();
+
+                this._throwUncaughtErrors();
+
+              case 11:
               case 'end':
                 return _context3.stop();
             }
@@ -218,62 +258,40 @@ var ThreadPool = function (_EventEmitter) {
         }, _callee3, this);
       }));
 
-      function runAllQueued() {
+      function run() {
         return _ref3.apply(this, arguments);
       }
 
-      return runAllQueued;
+      return run;
     }()
+
+    /**
+     * Closes the ThreadPool for further task queueing, the ThreadPool's completion can be awaited afte'r it's called
+     */
+
   }, {
-    key: 'run',
+    key: 'close',
+    value: function close() {
+      this.closed = true;
+    }
+
+    /**
+     * Closes the ThreadPool, runs it's tasks and awaits their completion
+     */
+
+  }, {
+    key: 'runAllQueued',
     value: function () {
       var _ref4 = _asyncToGenerator(regeneratorRuntime.mark(function _callee4() {
-        var error;
         return regeneratorRuntime.wrap(function _callee4$(_context4) {
           while (1) {
             switch (_context4.prev = _context4.next) {
               case 0:
-                this.startTimeMs = Date.now();
+                this.close();
+                _context4.next = 3;
+                return this.run();
 
-              case 1:
-                if (!(!this.closed || this.startedCount - this.endedCount > 0 || this.queuedTasks.length > 0)) {
-                  _context4.next = 8;
-                  break;
-                }
-
-                // TP is still open OR at least one task is running OR queued (we have work to do)
-
-                while (this.startedCount - this.endedCount < this.maxThreadsCount && this.queuedTasks.length > 0) {
-                  // we can run more tasks
-                  this._popAndRunNextTask();
-                }
-
-                if (!(!this.closed || this.startedCount - this.endedCount > 0)) {
-                  _context4.next = 6;
-                  break;
-                }
-
-                _context4.next = 6;
-                return (0, _asyncUtils.sleep)(this.sleepTimeMs);
-
-              case 6:
-                _context4.next = 1;
-                break;
-
-              case 8:
-                this.endTimeMs = Date.now();
-
-                if (!(this.uncaughtErrors.length > 0)) {
-                  _context4.next = 13;
-                  break;
-                }
-
-                error = new Error(this.uncaughtErrors.length + ' errors were thrown during ThreadPool execution');
-
-                error.uncaughtErrors = this.uncaughtErrors;
-                throw error;
-
-              case 13:
+              case 3:
               case 'end':
                 return _context4.stop();
             }
@@ -281,12 +299,17 @@ var ThreadPool = function (_EventEmitter) {
         }, _callee4, this);
       }));
 
-      function run() {
+      function runAllQueued() {
         return _ref4.apply(this, arguments);
       }
 
-      return run;
+      return runAllQueued;
     }()
+
+    /**
+     * Awaits the closing and completion of all ThreadPool tasks
+     */
+
   }, {
     key: 'waitComplete',
     value: function () {
@@ -295,7 +318,7 @@ var ThreadPool = function (_EventEmitter) {
           while (1) {
             switch (_context5.prev = _context5.next) {
               case 0:
-                if (!(!this.closed || this.startedCount - this.endedCount > 0 || this.queuedTasks.length > 0)) {
+                if (!this._thereIsSomethingToWaitFor) {
                   _context5.next = 5;
                   break;
                 }
@@ -308,6 +331,10 @@ var ThreadPool = function (_EventEmitter) {
                 break;
 
               case 5:
+
+                this._throwUncaughtErrors();
+
+              case 6:
               case 'end':
                 return _context5.stop();
             }
@@ -321,11 +348,11 @@ var ThreadPool = function (_EventEmitter) {
 
       return waitComplete;
     }()
-  }, {
-    key: 'close',
-    value: function close() {
-      this.closed = true;
-    }
+
+    /**
+     * Closes the ThreadPool and awaits the running and completion of all ThreadPool tasks
+     */
+
   }, {
     key: 'closeAndWaitComplete',
     value: function () {
@@ -352,6 +379,11 @@ var ThreadPool = function (_EventEmitter) {
 
       return closeAndWaitComplete;
     }()
+
+    /**
+     * Returns the time in milliseconds that passed since the last still uncompleted task started executing
+     */
+
   }, {
     key: 'getLongestStillRunningMs',
     value: function getLongestStillRunningMs() {
@@ -365,6 +397,132 @@ var ThreadPool = function (_EventEmitter) {
       });
       var longestRunning = Math.max.apply(Math, _toConsumableArray(runTimes));
       return longestRunning;
+    }
+
+    /****************** privates ******************/
+
+  }, {
+    key: '_throwUncaughtErrors',
+    value: function _throwUncaughtErrors() {
+      if (this._thereWereUncaughtErrors) {
+        var error = new Error(this.uncaughtErrors.length + ' errors were thrown during ThreadPool execution');
+        error.uncaughtErrors = this.uncaughtErrors;
+        throw error;
+      }
+    }
+  }, {
+    key: '_internalQueue',
+    value: function _internalQueue(func) {
+      this.queuedTasks.push({ func: func, index: this.queuedCount });
+      this._taskData.set(this.queuedCount, new TaskDesc());
+      this.queuedCount++;
+    }
+  }, {
+    key: '_popAndRunNextTask',
+    value: function () {
+      var _ref7 = _asyncToGenerator(regeneratorRuntime.mark(function _callee7() {
+        var taskToRun, taskData;
+        return regeneratorRuntime.wrap(function _callee7$(_context7) {
+          while (1) {
+            switch (_context7.prev = _context7.next) {
+              case 0:
+                taskToRun = this.queuedTasks.shift();
+                taskData = this._taskData.get(taskToRun.index);
+
+                if (taskData) {
+                  _context7.next = 4;
+                  break;
+                }
+
+                throw new Error('unexpected');
+
+              case 4:
+                _context7.prev = 4;
+
+                this.startedCount++;
+                taskData.startTime = Date.now();
+
+                if (!(typeof taskToRun.func === 'function')) {
+                  _context7.next = 12;
+                  break;
+                }
+
+                _context7.next = 10;
+                return taskToRun.func();
+
+              case 10:
+                _context7.next = 14;
+                break;
+
+              case 12:
+                _context7.next = 14;
+                return taskToRun.func;
+
+              case 14:
+                _context7.next = 19;
+                break;
+
+              case 16:
+                _context7.prev = 16;
+                _context7.t0 = _context7['catch'](4);
+
+                try {
+                  taskData.err = _context7.t0;
+                  this.errorHandler(_context7.t0);
+                } catch (err2) {
+                  this.uncaughtErrors.push(err2);
+                }
+
+              case 19:
+                this.endedCount++;
+                taskData.endTime = Date.now();
+
+                // fire 'progress' event
+                this.emit('progress', { endedCount: this.endedCount });
+
+              case 22:
+              case 'end':
+                return _context7.stop();
+            }
+          }
+        }, _callee7, this, [[4, 16]]);
+      }));
+
+      function _popAndRunNextTask() {
+        return _ref7.apply(this, arguments);
+      }
+
+      return _popAndRunNextTask;
+    }()
+  }, {
+    key: '_thereIsSpaceForNewTasks',
+    get: function get() {
+      return this.startedCount - this.endedCount < this.maxThreadsCount;
+    }
+  }, {
+    key: '_thereWereUncaughtErrors',
+    get: function get() {
+      return this.uncaughtErrors.length > 0;
+    }
+  }, {
+    key: '_newTasksCanBeQueued',
+    get: function get() {
+      return !this.closed && !this._thereWereUncaughtErrors;
+    }
+  }, {
+    key: '_thereAreRunningTasks',
+    get: function get() {
+      return this.startedCount - this.endedCount > 0;
+    }
+  }, {
+    key: '_thereAreQueuedTasksThatCanRun',
+    get: function get() {
+      return this.queuedTasks.length > 0 && !this._thereWereUncaughtErrors;
+    }
+  }, {
+    key: '_thereIsSomethingToWaitFor',
+    get: function get() {
+      return this._thereAreRunningTasks || this._thereAreQueuedTasksThatCanRun || this._newTasksCanBeQueued;
     }
   }]);
 
