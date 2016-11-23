@@ -1,4 +1,4 @@
-## threadpool.js
+## threadpool.js [![Build Status](https://travis-ci.org/vadimzak/threadpool.svg?branch=master)](https://travis-ci.org/vadimzak/threadpool) [![npm version](https://badge.fury.io/js/threadpool.svg)](http://badge.fury.io/js/threadpool)
 
 __A thread-pool abstraction for ES6 async operations__
 

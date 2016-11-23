@@ -1,5 +1,6 @@
 // @flow
 
+import "babel-polyfill"
 import EventEmitter from 'events'
 import os from 'os'
 

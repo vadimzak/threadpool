@@ -2,20 +2,14 @@
   "plugins": [
     "transform-class-properties",
     "transform-export-extensions",
-
     "transform-object-rest-spread",
-
-    "syntax-trailing-function-commas",
-    "transform-async-to-generator",
     "transform-exponentiation-operator",
-
     "transform-es2015-modules-commonjs",
-    "transform-flow-strip-types",
-
-    "transform-async-generator-functions"
+    "transform-async-generator-functions",
+    "transform-flow-strip-types"
   ],
   "presets": [
-    "es2017"
+    "latest"
   ],
   "sourceMaps": "true"
 }

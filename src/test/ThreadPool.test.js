@@ -1,5 +1,6 @@
 // @flow
 
+import "babel-polyfill"
 import ThreadPool from '../ThreadPool'
 import { sleep } from '../asyncUtils'
 import { expect } from 'chai'

@@ -1,8 +1,14 @@
 {
   "name": "threadpool",
-  "version": "0.9.4",
+  "version": "0.9.5",
   "description": "A thread-pool abstraction for ES6 async operations",
-  "keywords": ["threadpool", "async", "await", "parallel", "es6"],
+  "keywords": [
+    "threadpool",
+    "async",
+    "await",
+    "parallel",
+    "es6"
+  ],
   "main": "build/ThreadPool.js",
   "scripts": {
     "build": "node_modules/.bin/babel src -d build --source-maps",
@@ -11,23 +17,23 @@
     "runtest": "node_modules/.bin/mocha --require source-map-support/register --recursive \"build/**/*.test.js\"",
     "test": "npm run build && npm run runtest",
     "prep": "npm run flow && npm run lint && npm run test",
-    "npmpublish": "npm run prep && npm publish"
+    "npmpublish": "npm run prep && npm publish",
+    "git-ammend": "git add . && git commit --amend --no-edit && git push -f"
   },
   "author": "Vadim Zak <vadimzak@gmail.com>",
   "license": "MIT",
   "devDependencies": {
     "babel-cli": "^6.18.0",
     "babel-eslint": "^7.1.1",
-    "babel-plugin-syntax-trailing-function-commas": "^6.13.0",
     "babel-plugin-transform-async-generator-functions": "^6.17.0",
-    "babel-plugin-transform-async-to-generator": "^6.16.0",
     "babel-plugin-transform-class-properties": "^6.19.0",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.18.0",
     "babel-plugin-transform-exponentiation-operator": "^6.8.0",
     "babel-plugin-transform-export-extensions": "^6.8.0",
     "babel-plugin-transform-flow-strip-types": "^6.18.0",
     "babel-plugin-transform-object-rest-spread": "^6.19.0",
-    "babel-preset-es2017": "^6.16.0",
+    "babel-polyfill": "^6.16.0",
+    "babel-preset-latest": "^6.16.0",
     "chai": "^3.5.0",
     "eslint": "^3.10.2",
     "eslint-plugin-flowtype": "^2.25.0",
@@ -41,5 +47,7 @@
     "type": "git",
     "url": "https://github.com/vadimzak/threadpool"
   },
-  "engines": { "node" : ">=5.0.0" }
+  "engines": {
+    "node": ">=4.0.0"
+  }
 }
